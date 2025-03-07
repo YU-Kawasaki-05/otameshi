@@ -1,68 +1,1076 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>一番かわいい犬について</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>エンジニアリングにおけるスプリントの概念</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* 基本設定とカラーパレット */
+    :root {
+      --primary: #3498db;
+      --primary-dark: #2980b9;
+      --secondary: #e74c3c;
+      --accent: #f39c12;
+      --dark: #34495e;
+      --light: #ecf0f1;
+      --text: #2c3e50;
+      --text-light: #7f8c8d;
+      --success: #2ecc71;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      line-height: 1.8;
+      color: var(--text);
+      background-color: #f9f9f9;
+      overflow-x: hidden;
+    }
+
+    /* ナビゲーション */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: white;
+      box-shadow: 0 2px 10px var(--shadow);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .navbar-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+    }
+
+    .nav-links li {
+      margin-left: 2rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      position: relative;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 0;
+      background-color: var(--primary);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .menu-toggle {
+      display: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+
+    /* ヒーローセクション */
+    .hero {
+      padding: 8rem 5% 5rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><polygon fill="rgba(255,255,255,0.05)" points="0,100 100,0 100,100"/></svg>');
+      background-size: cover;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.8rem 2rem;
+      background-color: var(--accent);
+      color: white;
+      text-decoration: none;
+      border-radius: 30px;
+      font-weight: 600;
+      transition: all 0.3s;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      background-color: #e67e22;
+    }
+
+    /* メインコンテンツ */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 5%;
+    }
+
+    section {
+      padding: 5rem 0;
+      position: relative;
+    }
+
+    section:nth-child(even) {
+      background-color: white;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+
+    .section-title h2 {
+      font-size: 2.2rem;
+      color: var(--dark);
+      display: inline-block;
+    }
+
+    .section-title h2::after {
+      content: '';
+      display: block;
+      width: 70px;
+      height: 3px;
+      background-color: var(--primary);
+      margin: 1rem auto 0;
+    }
+
+    .section-title p {
+      color: var(--text-light);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 1rem auto 0;
+    }
+
+    /* 概要セクション */
+    .text-block {
+      background-color: white;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 5px 15px var(--shadow);
+      margin-bottom: 2rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .text-block:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    /* スプリント説明セクション */
+    .sprint-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .info-card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 5px 15px var(--shadow);
+      transition: all 0.3s ease;
+      border-top: 4px solid var(--primary);
+    }
+
+    .info-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .info-card i {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .info-card h3 {
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+      color: var(--dark);
+    }
+
+    /* リスト表示の改善 */
+    ul, ol {
+      padding-left: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    ul li, ol li {
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    ul li::before {
+      content: "•";
+      color: var(--primary);
+      font-weight: bold;
+      display: inline-block;
+      width: 1.5rem;
+      margin-left: -1.5rem;
+      font-size: 1.2rem;
+    }
+
+    ol {
+      counter-reset: item;
+      list-style: none;
+    }
+
+    ol li {
+      counter-increment: item;
+    }
+
+    ol li::before {
+      content: counter(item) ".";
+      color: var(--primary);
+      font-weight: bold;
+      margin-right: 0.5rem;
+      position: absolute;
+      left: -1.5rem;
+    }
+
+    /* 具体例セクション */
+    .process-timeline {
+      position: relative;
+      max-width: 800px;
+      margin: 3rem auto;
+    }
+
+    .process-timeline::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 20px;
+      width: 3px;
+      background-color: var(--primary);
+      margin-left: -1px;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 60px;
+      margin-bottom: 2.5rem;
+    }
+
+    .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: white;
+      border: 3px solid var(--primary);
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .timeline-item:nth-child(1)::before {
+      content: '1';
+      color: var(--primary);
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .timeline-item:nth-child(2)::before {
+      content: '2';
+      color: var(--primary);
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .timeline-item:nth-child(3)::before {
+      content: '3';
+      color: var(--primary);
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .timeline-item:nth-child(4)::before {
+      content: '4';
+      color: var(--primary);
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .timeline-content {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px var(--shadow);
+    }
+
+    .timeline-content h3 {
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    /* メリットセクション */
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .benefit-card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.8rem;
+      box-shadow: 0 5px 15px var(--shadow);
+      transition: all 0.3s ease;
+      text-align: center;
+      border-bottom: 4px solid var(--accent);
+    }
+
+    .benefit-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .benefit-card i {
+      font-size: 2.5rem;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+
+    .benefit-card h3 {
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+      color: var(--dark);
+    }
+
+    /* スプリント可視化アニメーション */
+    .sprint-visual {
+      max-width: 800px;
+      margin: 4rem auto;
+      background-color: white;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 5px 15px var(--shadow);
+    }
+
+    .sprint-progress {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-top: 3rem;
+    }
+
+    .sprint-progress::before {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: #e0e0e0;
+      z-index: 1;
+    }
+
+    .progress-bar {
+      position: absolute;
+      top: 15px;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background-color: var(--success);
+      z-index: 2;
+      transition: width 1.5s ease;
+    }
+
+    .sprint-stage {
+      position: relative;
+      z-index: 3;
+      text-align: center;
+      width: 80px;
+    }
+
+    .stage-dot {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: white;
+      border: 3px solid #e0e0e0;
+      margin: 0 auto;
+      transition: all 0.3s ease;
+    }
+
+    .stage-label {
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-light);
+      transition: all 0.3s ease;
+    }
+
+    .sprint-visual:hover .progress-bar {
+      width: 100%;
+    }
+
+    .sprint-visual:hover .sprint-stage:nth-child(1) .stage-dot {
+      background-color: var(--success);
+      border-color: var(--success);
+    }
+
+    .sprint-visual:hover .sprint-stage:nth-child(1) .stage-label {
+      color: var(--success);
+    }
+
+    .sprint-visual:hover .sprint-stage:nth-child(2) .stage-dot {
+      background-color: var(--success);
+      border-color: var(--success);
+      transition-delay: 0.4s;
+    }
+
+    .sprint-visual:hover .sprint-stage:nth-child(2) .stage-label {
+      color: var(--success);
+      transition-delay: 0.4s;
+    }
+
+    .sprint-visual:hover .sprint-stage:nth-child(3) .stage-dot {
+      background-color: var(--success);
+      border-color: var(--success);
+      transition-delay: 0.8s;
+    }
+
+    .sprint-visual:hover .sprint-stage:nth-child(3) .stage-label {
+      color: var(--success);
+      transition-delay: 0.8s;
+    }
+
+    .sprint-visual:hover .sprint-stage:nth-child(4) .stage-dot {
+      background-color: var(--success);
+      border-color: var(--success);
+      transition-delay: 1.2s;
+    }
+
+    .sprint-visual:hover .sprint-stage:nth-child(4) .stage-label {
+      color: var(--success);
+      transition-delay: 1.2s;
+    }
+
+    /* まとめセクション */
+    .highlight-box {
+      background-color: rgba(52, 152, 219, 0.1);
+      border-left: 4px solid var(--primary);
+      padding: 2rem;
+      border-radius: 0 8px 8px 0;
+      margin: 2rem 0;
+    }
+
+    /* お問い合わせセクション */
+    .cta-section {
+      text-align: center;
+      padding: 5rem 0;
+      background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+      color: white;
+    }
+
+    .cta-content {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .cta-content h2 {
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-content p {
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    /* フッター */
+    footer {
+      background-color: var(--dark);
+      color: white;
+      padding: 4rem 0 2rem;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+      padding: 0 5%;
+      text-align: left;
+    }
+
+    .footer-column h3 {
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .footer-column h3::after {
+      content: '';
+      position: absolute;
+      width: 50px;
+      height: 2px;
+      background-color: var(--primary);
+      bottom: -8px;
+      left: 0;
+    }
+
+    .footer-column p {
+      color: #bdc3c7;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-links a {
+      color: #bdc3c7;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: var(--primary);
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .social-links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .social-links a:hover {
+      background-color: var(--primary);
+      transform: translateY(-3px);
+    }
+
+    .copyright {
+      text-align: center;
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #bdc3c7;
+      font-size: 0.9rem;
+    }
+
+    /* スクロールトップボタン */
+    .scroll-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 1000;
+    }
+
+    .scroll-top.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .scroll-top:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-3px);
+    }
+
+    /* レスポンシブデザイン */
+    @media (max-width: 992px) {
+      .hero h1 {
+        font-size: 2.4rem;
+      }
+      .section-title h2 {
+        font-size: 2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar-container {
+        padding: 1rem 2rem;
+      }
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        height: 100vh;
+        background-color: white;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 5rem 2rem 2rem;
+        transition: right 0.3s ease;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+      }
+      .nav-links.active {
+        right: 0;
+      }
+      .nav-links li {
+        margin: 1.5rem 0;
+      }
+      .menu-toggle {
+        display: block;
+      }
+      .hero {
+        padding-top: 7rem;
+      }
+      .hero h1 {
+        font-size: 2rem;
+      }
+      .hero p {
+        font-size: 1rem;
+      }
+      .process-timeline::before {
+        left: 12px;
+      }
+      .timeline-item::before {
+        width: 24px;
+        height: 24px;
+        font-size: 0.9rem;
+      }
+      .timeline-item {
+        padding-left: 40px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      section {
+        padding: 3rem 0;
+      }
+      .section-title {
+        margin-bottom: 2rem;
+      }
+      .section-title h2 {
+        font-size: 1.8rem;
+      }
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+      .sprint-stage {
+        width: 60px;
+      }
+      .stage-label {
+        font-size: 0.7rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>私なりに考える「一番かわいい犬」について</h1>
-        <p>2024年12月5日</p>
-    </header>
+  <!-- ナビゲーションバー -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="#" class="logo">Sprint Guide</a>
+      <ul class="nav-links">
+        <li><a href="#overview">概要</a></li>
+        <li><a href="#what-is-sprint">スプリントとは</a></li>
+        <li><a href="#concrete-example">具体例</a></li>
+        <li><a href="#benefits">メリット</a></li>
+        <li><a href="#conclusion">まとめ</a></li>
+      </ul>
+      <div class="menu-toggle" id="mobile-menu">
+        <i class="fas fa-bars"></i>
+      </div>
+    </div>
+  </nav>
 
-    <main>
-        <section>
-            <p>こんにちは、皆さん！今日は私が思う「一番かわいい犬」についてお話ししたいと思います。犬種はたくさんありますが、それぞれに魅力があります。私が特に心を惹かれるのは「フレンチ・ブルドッグ」です。その理由を詳しくご紹介しますね。</p>
-        </section>
+  <!-- ヒーローセクション -->
+  <header class="hero">
+    <div class="hero-content">
+      <h1>エンジニアリングにおけるスプリントの概念</h1>
+      <p>非エンジニアでもわかる、スプリントの基本と活用法</p>
+      <a href="#overview" class="btn">詳しく見る <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </header>
 
-        <section>
-            <h2>フレンチ・ブルドッグとは？</h2>
-            <p>フレンチ・ブルドッグ、通称「フレンチ・ブル」は、その愛らしい外見とユニークな性格で人気の犬種です。小型犬でありながら筋肉質な体つきをしており、特徴的な「バットイヤー」（コウモリのような耳）と大きな瞳がとても魅力的です。</p>
-        </section>
+  <!-- 概要セクション -->
+  <section id="overview">
+    <div class="container">
+      <div class="section-title">
+        <h2>概要</h2>
+        <p>スプリントを活用することでプロジェクトがどのように変わるか</p>
+      </div>
+      <div class="text-block">
+        <p>
+          スプリントは、ソフトウェア開発におけるアジャイル手法―特に「スクラム」と呼ばれる方法論―で用いられる重要な概念です。一定期間内に決められたタスクや機能を完成させることで、プロジェクトの進捗を小刻みに確認しながら進める手法です。
+        </p>
+      </div>
+    </div>
+  </section>
 
-        <section>
-            <h2>フレンチ・ブルの魅力</h2>
+  <!-- スプリントとは？セクション -->
+  <section id="what-is-sprint">
+    <div class="container">
+      <div class="section-title">
+        <h2>スプリントとは？</h2>
+        <p>理解を深めるためのスプリントの基本概念</p>
+      </div>
+      <div class="text-block">
+        <p>
+          スプリントは通常、1〜4週間という短い期間で設定され、その期間内に具体的な目標やタスクを達成することを目指します。各スプリントの始まりには「計画会議」で何をやるかを決め、期間終了時には「レビュー」や「振り返り」を行って、成果を確認し改善点を抽出します。
+        </p>
+      </div>
 
-            <h3>見た目の可愛さ</h3>
-            <p>フレンチ・ブルドッグの最大の魅力は、その愛らしい顔立ちです。大きな目と丸い顔は、見ているだけで癒されます。また、短い鼻と太い胴体がバランスよく調和しており、抱きしめたくなるような可愛さがあります。</p>
+      <div class="sprint-info">
+        <div class="info-card">
+          <i class="fas fa-calendar-alt"></i>
+          <h3>期間</h3>
+          <p>約1〜4週間の短期間で設定されます。一般的には2週間が多く採用されています。</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-bullseye"></i>
+          <h3>目的</h3>
+          <p>小さな単位での成果確認と早期のフィードバック獲得を実現します。</p>
+        </div>
+        <div class="info-card">
+          <i class="fas fa-star"></i>
+          <h3>特徴</h3>
+          <p>明確な目標、定期的な進捗報告、チーム全体の協力が特徴です。</p>
+        </div>
+      </div>
 
-            <h3>性格の良さ</h3>
-            <p>フレンチ・ブルは非常に社交的で、人懐っこい性格をしています。家族と一緒に過ごす時間を大切にし、子供や他のペットとも仲良くすることができます。また、活発で遊び好きな一面もあり、飼い主と一緒に過ごす時間を楽しむ姿は本当に微笑ましいです。</p>
+      <!-- スプリント可視化 -->
+      <div class="sprint-visual">
+        <h3 style="text-align: center; margin-bottom: 2rem;">スプリントサイクル</h3>
+        <div class="sprint-progress">
+          <div class="progress-bar"></div>
+          <div class="sprint-stage">
+            <div class="stage-dot"></div>
+            <div class="stage-label">計画</div>
+          </div>
+          <div class="sprint-stage">
+            <div class="stage-dot"></div>
+            <div class="stage-label">実行</div>
+          </div>
+          <div class="sprint-stage">
+            <div class="stage-dot"></div>
+            <div class="stage-label">レビュー</div>
+          </div>
+          <div class="sprint-stage">
+            <div class="stage-dot"></div>
+            <div class="stage-label">振り返り</div>
+          </div>
+        </div>
+        <p style="text-align: center; margin-top: 3rem; font-size: 0.9rem; color: var(--text-light);">
+          ※ 上のバーにホバーすると、スプリントサイクルのアニメーションが表示されます
+        </p>
+      </div>
+    </div>
+  </section>
 
-            <h3>飼いやすさ</h3>
-            <p>小型犬であるフレンチ・ブルは、アパート暮らしにも適しています。運動量もそれほど多くなく、短い散歩で十分満足します。また、被毛が短いため、手入れも比較的簡単です。ただし、暑さには弱いので、夏場の管理には注意が必要です。</p>
-        </section>
+  <!-- 具体例セクション -->
+  <section id="concrete-example">
+    <div class="container">
+      <div class="section-title">
+        <h2>具体例</h2>
+        <p>実際のプロジェクトでのスプリント活用例</p>
+      </div>
+      <div class="text-block">
+        <p>
+          例として、あるウェブアプリの開発チームが「ユーザープロフィール編集機能」を追加するプロジェクトを考えてみましょう。
+        </p>
+      </div>
 
-        <section>
-            <h2>フレンチ・ブルドッグの魅力的なエピソード</h2>
-            <p>フレンチ・ブルドッグはその愛らしさから、SNSでも大人気です。可愛い仕草や表情を披露する動画や写真が多くシェアされており、多くの人々に笑顔を届けています。また、セラピー犬としても活躍しており、病院や介護施設で人々を癒す存在として重宝されています。</p>
-        </section>
+      <div class="process-timeline">
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <h3>計画フェーズ</h3>
+            <p>
+              チームは最初に会議を開き、どの機能をどう実装するかを検討し、デザイン、実装、テストなどのタスクに分割します。これらのタスクを2週間のスプリント内で完了させる計画を立てます。
+            </p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <h3>実行フェーズ</h3>
+            <p>
+              スプリント期間中、各メンバーは担当タスクに取り組み、毎日のスタンドアップミーティングで進捗状況を共有します。これにより、問題の早期発見やタスクの調整が可能になります。
+            </p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <h3>レビューとフィードバック</h3>
+            <p>
+              2週間のスプリント終了時に、完成した「ユーザープロフィール編集機能」を関係者にデモし、フィードバックを受け取ります。
+            </p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <h3>振り返り</h3>
+            <p>
+              チーム全体でスプリントの進行状況や課題点を話し合い、次回のスプリントでの改善策を検討します。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        <section>
-            <h2>まとめ</h2>
-            <p>「一番かわいい犬」は人それぞれの感じ方によりますが、私にとってフレンチ・ブルドッグはその愛らしい外見と温かい性格でトップに立ちます。もし犬を飼おうと考えている方がいれば、フレンチ・ブルドッグをぜひ候補に入れてみてください。きっと素敵なパートナーになってくれることでしょう。</p>
-            <p>皆さんはどんな犬が一番かわいいと思いますか？ぜひコメントで教えてくださいね！</p>
-        </section>
+  <!-- メリットセクション -->
+  <section id="benefits">
+    <div class="container">
+      <div class="section-title">
+        <h2>スプリントのメリット</h2>
+        <p>導入することで得られるビジネス価値</p>
+      </div>
 
-        <section>
-            <h2>参考情報</h2>
-            <ul>
-                <li><a href="https://www.example.com/frenchbulldog" target="_blank" rel="noopener">フレンチ・ブルドッグの基礎知識</a></li>
-                <li><a href="https://www.example.com/frenchbulldogcare" target="_blank" rel="noopener">フレンチ・ブルドッグの飼い方ガイド</a></li>
-                <li><a href="https://www.example.com/frenchbulldogphotos" target="_blank" rel="noopener">フレンチ・ブルの可愛い写真集</a></li>
-            </ul>
-        </section>
-    </main>
+      <div class="benefits">
+        <div class="benefit-card">
+          <i class="fas fa-comment-dots"></i>
+          <h3>迅速なフィードバック</h3>
+          <p>短期間で成果を確認できるため、ユーザーや関係者からの意見をすぐに取り入れることができます。</p>
+        </div>
+        <div class="benefit-card">
+          <i class="fas fa-sync-alt"></i>
+          <h3>柔軟な対応</h3>
+          <p>プロジェクトの途中で仕様変更があっても、次のスプリントで対応できる柔軟性があります。</p>
+        </div>
+        <div class="benefit-card">
+          <i class="fas fa-award"></i>
+          <h3>品質向上</h3>
+          <p>定期的なレビューと振り返りにより、問題点を早期に発見し修正することで、製品の品質が向上します。</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <footer>
-        <p>この記事が皆さんの参考になれば嬉しいです。最後までお読みいただき、ありがとうございました！</p>
-        <p><strong>フォローしてね！</strong></p>
-        <p>もっと犬に関する記事や情報を知りたい方は、ぜひフォローしてくださいね。今後も魅力的なコンテンツをお届けします！</p>
-        <hr>
-        <p><em>この記事は、ChatGPTによって作成されました。ご意見やご感想がありましたら、ぜひコメント欄でお知らせください。</em></p>
-        <p><strong>Tags:</strong> 犬, フレンチ・ブルドッグ, ペット, かわいい犬, ドッグブリード</p>
-    </footer>
+  <!-- まとめセクション -->
+  <section id="conclusion">
+    <div class="container">
+      <div class="section-title">
+        <h2>まとめ</h2>
+        <p>スプリントを活用した開発プロセスの価値</p>
+      </div>
+
+      <div class="highlight-box">
+        <p>
+          スプリントは、短期間で具体的な成果を上げ、定期的に進捗や改善点を見直すことで、プロジェクト全体の品質向上や柔軟な対応を実現する手法です。非エンジニアの方でも、この考え方を理解することで、プロジェクト管理やチームの進捗状況をより身近に感じることができるでしょう。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- お問い合わせセクション -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2>さらに詳しく知りたいですか？</h2>
+      <p>スプリントに関する詳細情報や、実際の導入サポートについてお問い合わせください。</p>
+      <a href="#" class="btn">お問い合わせ <i class="fas fa-paper-plane"></i></a>
+    </div>
+  </section>
+
+  <!-- フッター -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-column">
+        <h3>Sprint Guide</h3>
+        <p>エンジニアリングの効率的な手法を誰でも分かりやすく解説します。スプリントを理解して、プロジェクト管理の質を向上させましょう。</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-github"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h3>リンク</h3>
+        <ul class="footer-links">
+          <li><a href="#overview">概要</a></li>
+          <li><a href="#what-is-sprint">スプリントとは</a></li>
+          <li><a href="#concrete-example">具体例</a></li>
+          <li><a href="#benefits">メリット</a></li>
+          <li><a href="#conclusion">まとめ</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>リソース</h3>
+        <ul class="footer-links">
+          <li><a href="#">ブログ</a></li>
+          <li><a href="#">ケーススタディ</a></li>
+          <li><a href="#">よくある質問</a></li>
+          <li><a href="#">ダウンロード</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>© 2025 エンジニアリング入門ウェブサイト. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- スクロールトップボタン -->
+  <a href="#" class="scroll-top" id="scroll-top">
+    <i class="fas fa-chevron-up"></i>
+  </a>
+
+  <!-- JavaScript -->
+  <script>
+    // モバイルメニューの切り替え
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navLinks = document.querySelector('.nav-links');
+    
+    if (mobileMenu) {
+      mobileMenu.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        mobileMenu.innerHTML = navLinks.classList.contains('active') 
+          ? '<i class="fas fa-times"></i>' 
+          : '<i class="fas fa-bars"></i>';
+      });
+    }
+
+    // ナビゲーションリンクをクリックしたときにモバイルメニューを閉じる
+    const navItems = document.querySelectorAll('.nav-links a');
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        if (mobileMenu) {
+          mobileMenu.innerHTML = '<i class="fas fa-bars"></i>';
+        }
+      });
+    });
+
+    // スクロールトップボタンの表示制御
+    const scrollTopBtn = document.getElementById('scroll-top');
+    
+    window.addEventListener('scroll', () => {
+      if (window.pageYOffset > 300) {
+        scrollTopBtn.classList.add('active');
+      } else {
+        scrollTopBtn.classList.remove('active');
+      }
+    });
+
+    // スムーススクロール
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          const navbarHeight = document.querySelector('.navbar').offsetHeight;
+          const targetPosition = targetElement.offsetTop - navbarHeight;
+          
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  </script>
 </body>
 </html>
